@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Scene.h"
+#include "Text.h"
 
 #include "Framework.h"
 
@@ -14,8 +15,10 @@ static ESceneType s_nextScene = SCENE_NULL;
 #define BLENDED 2
 
 const wchar_t* str[] = {
-	L"여기는 타이틀씬입니다. 텍스트와 관련된 여러가지를 테스트해봅시다.",
-	L"B키를 누르면 폰트가 굵게 변합니다.",
+	L"게임 시작",
+	L"게임 종료",
+
+	/*L"B키를 누르면 폰트가 굵게 변합니다.",
 	L"I키를 누르면 폰트가 이탤릭체로 변합니다.",
 	L"U키를 누르면 텍스트에 밑줄이 생깁니다.",
 	L"S키를 누르면 텍스트에 취소선이 생깁니다.",
@@ -23,16 +26,19 @@ const wchar_t* str[] = {
 	L"C키를 누르면 렌더 모드가 바뀝니다. (Solid -> Shaded -> Blended)",
 	L"1키를 누르면 텍스트가 작아집니다.",
 	L"2키를 누르면 텍스트가 커집니다.",
-	L"스페이스 키를 누르면 다음 씬으로 넘어갑니다."
+	L"스페이스 키를 누르면 다음 씬으로 넘어갑니다."*/
 };
+#define TEXT_NUM1 2
 
 typedef struct TitleSceneData
 {
-	Text	GuideLine[10];
-	Text	TestText;
+	Text	GuideLine[TEXT_NUM1];
+	COORD	coord;
 	int32	FontSize;
 	int32	RenderMode;
 	Image	TestImage;
+	int32		X;
+	int32		Y;
 } TitleSceneData;
 
 void init_title(void)
@@ -41,66 +47,41 @@ void init_title(void)
 	memset(g_Scene.Data, 0, sizeof(TitleSceneData));
 
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
-	for (int32 i = 0; i < 10; ++i)
+	data->FontSize = 40;
+	for (int32 i = 0; i < TEXT_NUM1; ++i)
 	{
-		Text_CreateText(&data->GuideLine[i], "d2coding.ttf", 16, str[i], wcslen(str[i]));
+		Text_CreateText(&data->GuideLine[i], "d2coding.ttf", data->FontSize, str[i], wcslen(str[i]));
 	}
-
-	data->FontSize = 24;
-	Text_CreateText(&data->TestText, "d2coding.ttf", data->FontSize, L"이 텍스트가 변합니다.", 13);
-
+	data->coord.X = 10;
+	data->coord.Y = 10;
 	data->RenderMode = SOLID;
-
+	int32		X=10;
+	int32		Y=10;
 	Image_LoadImage(&data->TestImage, "Background.jfif");
+	CSV;
 }
 
+int count = 0;
 void update_title(void)
 {
+	
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
-
-	if (Input_GetKeyDown('B'))
+	
+	if (count > 0)
 	{
-		Text_SetFontStyle(&data->TestText, FS_BOLD);
+		if (Input_GetKeyDown(VK_UP))
+		{
+			count--;
+		}
 	}
-
-	if (Input_GetKeyDown('I'))
+	if (count < TEXT_NUM1 - 1)
 	{
-		Text_SetFontStyle(&data->TestText, FS_ITALIC);
+		if (Input_GetKeyDown(VK_DOWN))
+		{
+			count++;
+		}
 	}
-
-	if (Input_GetKeyDown('U'))
-	{
-		Text_SetFontStyle(&data->TestText, FS_UNDERLINE);
-	}
-
-	if (Input_GetKeyDown('S'))
-	{
-		Text_SetFontStyle(&data->TestText, FS_STRIKETHROUGH);
-	}
-
-	if (Input_GetKeyDown('N'))
-	{
-		Text_SetFontStyle(&data->TestText, FS_NORMAL);
-	}
-
-	if (Input_GetKeyDown('C'))
-	{
-		data->RenderMode = (data->RenderMode + 1) % 3;
-	}
-
-	if (Input_GetKey('1'))
-	{
-		--data->FontSize;
-		Text_SetFont(&data->TestText, "d2coding.ttf", data->FontSize);
-	}
-
-	if (Input_GetKey('2'))
-	{
-		++data->FontSize;
-		Text_SetFont(&data->TestText, "d2coding.ttf", data->FontSize);
-	}
-
-	if (Input_GetKeyDown(VK_SPACE))
+	if (Input_GetKeyDown('R'))
 	{
 		Scene_SetNextScene(SCENE_MAIN);
 	}
@@ -109,34 +90,18 @@ void update_title(void)
 void render_title(void)
 {
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
-	for (int32 i = 0; i < 10; ++i)
-	{
-		SDL_Color color = { .a = 255 };
-		Renderer_DrawTextSolid(&data->GuideLine[i], 10, 20 * i, color);
-	}
+	data->X = rand()% 1020;
+	data->Y = rand()% 200;
+
+	SDL_Color color = { .a = 255 };
+	SDL_Color choice_color = { .g = 255 };
 	
-	switch (data->RenderMode)
+	Renderer_DrawImage(&data->TestImage, data->X, data->Y);
+	
+	for (int32 i = 0; i < TEXT_NUM1; ++i)
 	{
-	case SOLID:
-	{
-		SDL_Color color = { .a = 255 };
-		Renderer_DrawTextSolid(&data->TestText, 400, 400, color);
-	}
-	break;
-	case SHADED:
-	{
-		SDL_Color bg = { .a = 255 };
-		SDL_Color fg = { .r = 255, .g = 255, .a = 255 };
-		Renderer_DrawTextShaded(&data->TestText, 400, 400, fg, bg);
-	}
-	break;
-	case BLENDED:
-	{
-		Renderer_DrawImage(&data->TestImage, 400, 400);
-		SDL_Color color = { .r = 255, .g = 255, .b = 255, .a = 255 };
-		Renderer_DrawTextBlended(&data->TestText, 400, 400, color);
-	}
-	break;
+		Renderer_DrawTextSolid(&data->GuideLine[i], 500, 500 + i* data->FontSize, color);
+		Renderer_DrawTextSolid(&data->GuideLine[count], 500, 500 + count* data->FontSize, choice_color);
 	}
 }
 
@@ -144,18 +109,17 @@ void release_title(void)
 {
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
 
-	for (int32 i = 0; i < 10; ++i)
+	for (int32 i = 0; i < TEXT_NUM1; ++i)
 	{
 		Text_FreeText(&data->GuideLine[i]);
 	}
-	Text_FreeText(&data->TestText);
 
 	SafeFree(g_Scene.Data);
 }
 #pragma endregion
 
 #pragma region MainScene
-const wchar_t* str2[] = {
+const wchar_t* st[] = {
 	L"여기서는 사운드와 이미지 블렌딩에 대해서 알아봅시다.",
 	L"화살표키로 이미지를 이동시킬 수 있습니다.",
 	L"E키를 누르면 이펙트를 재생시킬 수 있습니다. 이펙트 소리가 작으니 볼륨을 낮춘 후 진행하세요.",
@@ -200,7 +164,7 @@ void init_main(void)
 
 	for (int32 i = 0; i < GUIDELINE_COUNT; ++i)
 	{
-		Text_CreateText(&data->GuideLine[i], "d2coding.ttf", 16, str2[i], wcslen(str2[i]));
+		Text_CreateText(&data->GuideLine[i], "d2coding.ttf", 16, st[i], wcslen(st[i]));
 	}
 	
 	Image_LoadImage(&data->BackGround, "background.jfif");
@@ -334,7 +298,7 @@ void release_main(void)
 {
 	MainSceneData* data = (MainSceneData*)g_Scene.Data;
 
-	for (int32 i = 0; i < 10; ++i)
+	for (int32 i = 0; i < GUIDELINE_COUNT; ++i)
 	{
 		Text_FreeText(&data->GuideLine[i]);
 	}
@@ -345,6 +309,60 @@ void release_main(void)
 }
 #pragma endregion
 
+#pragma region scene2
+
+#define TEXT_NUM2 2
+const wchar_t* str2[] = {
+	L"게임 시작",
+	L"게임 종료",
+};
+typedef struct scene2SceneData
+{
+	Text	GuideLine[TEXT_NUM2];
+	COORD	coord;
+	int32	FontSize;
+	int32	RenderMode;
+	Image	TestImage;
+}  scene2sceneData;
+
+void init_scene2 (void)
+{
+	//g_Scene.Data = malloc(sizeof(scene2sceneData));
+	//memset(g_Scene.Data, 0, sizeof(scene2sceneData));
+
+	//scene2sceneData* data = (scene2sceneData*)g_Scene.Data;
+	//for (int32 i = 0; i < TEXT_NUM2; ++i)
+	//{
+	//	Text_CreateText(&data->GuideLine[i], "d2coding.ttf", 20, str2[i], wcslen(str2[i]));
+	//}
+	//data->coord.X = 10;
+	//data->coord.Y = 10;
+	//data->RenderMode = SOLID;
+
+	//Image_LoadImage(&data->TestImage, "Background.jfif");
+}
+void update_scene2 (void)
+{
+	//scene2sceneData* data = (scene2sceneData*)g_Scene.Data;
+
+}
+void render_scene2 (void)
+{
+	//scene2sceneData* data = (scene2sceneData*)g_Scene.Data;
+
+}
+void release_scene2(void)
+{
+	//scene2sceneData* data = (scene2sceneData*)g_Scene.Data;
+
+	//for (int32 i = 0; i < TEXT_NUM2; ++i)
+	//{
+	//	Text_FreeText(&data->GuideLine[i]);
+	//}
+
+	//SafeFree(g_Scene.Data);
+}
+#pragma endregion
 bool Scene_IsSetNextScene(void)
 {
 	if (SCENE_NULL == s_nextScene)
@@ -387,6 +405,12 @@ void Scene_Change(void)
 		g_Scene.Update = update_main;
 		g_Scene.Render = render_main;
 		g_Scene.Release = release_main;
+		break;
+	case SCENE_SCENE2:
+		g_Scene.Init = init_scene2;
+		g_Scene.Update = update_scene2;
+		g_Scene.Render = render_scene2;
+		g_Scene.Release = release_scene2;
 		break;
 	}
 
