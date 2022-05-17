@@ -14,9 +14,6 @@ static ESceneType s_nextScene = SCENE_NULL;
 #define SHADED 1
 #define BLENDED 2
 
-const wchar_t* str[] = {
-	L"TEST"
-};
 #define TEXT_NUM1 2
 
 const wchar_t* title_str[] = {
@@ -26,7 +23,7 @@ const wchar_t* title_str[] = {
 
 typedef struct TitleSceneData
 {
-	Text	GuideLine[TEXT_NUM1];
+	Text	choice[TEXT_NUM1];
 	COORD	coord;
 	int32	FontSize;
 	int32	RenderMode;
@@ -44,7 +41,7 @@ void init_title(void)
 	data->FontSize = 40;
 	for (int32 i = 0; i < TEXT_NUM1; ++i)
 	{
-		Text_CreateText(&data->GuideLine[i], "d2coding.ttf", data->FontSize, str[i], wcslen(str[i]));
+		Text_CreateText(&data->choice[i], "d2coding.ttf", data->FontSize, title_str[i], wcslen(title_str[i]));
 	}
 	data->coord.X = 10;
 	data->coord.Y = 10;
@@ -59,15 +56,13 @@ void init_title(void)
 int count = 0;
 void update_title(void)
 {
-	
+	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
 	if (count > 0)
-
+	{
 		if (Input_GetKeyDown(VK_UP))
 		{
 			count--;
 		}
-	{
-		Text_SetFontStyle(&data->TestText, FS_UNDERLINE);
 	}
 	if (count < TEXT_NUM1 - 1)
 	{
@@ -85,19 +80,22 @@ void update_title(void)
 void render_title(void)
 {
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
-	data->X = rand()% 1020;
-	data->Y = rand()% 200;
+	data->X = 510;
+	data->Y = 100;
 
 	SDL_Color color = { .a = 255 };
 	SDL_Color choice_color = { .g = 255 };
 	
 	Renderer_DrawImage(&data->TestImage, data->X, data->Y);
+	for (int i = 0; i < TEXT_NUM1; i++)
+	{	
+		if (i != count)//선택 한 것 이외의 선택지 출력
+		{
+			Renderer_DrawTextSolid(&data->choice[i], 500, 500 + i * data->FontSize, color);
+		}
+	}
+		Renderer_DrawTextSolid(&data->choice[count], 500, 500 + count* data->FontSize, choice_color);//선택한 선택지 출력
 	
-		Renderer_DrawTextSolid(&data->GuideLine[i], 500, 500 + i* data->FontSize, color);
-		Renderer_DrawTextSolid(&data->GuideLine[count], 500, 500 + count* data->FontSize, choice_color);
-	}
-	break;
-	}
 }
 
 void release_title(void)
@@ -106,7 +104,7 @@ void release_title(void)
 
 	for (int32 i = 0; i < TEXT_NUM1; ++i)
 	{
-		Text_FreeText(&data->GuideLine[i]);
+		Text_FreeText(&data->choice[i]);
 	}
 
 	SafeFree(g_Scene.Data);
@@ -301,9 +299,10 @@ void release_main(void)
 	Audio_FreeSoundEffect(&data->Effect);
 
 	SafeFree(g_Scene.Data);
-}
+
 }
 #pragma endregion
+
 bool Scene_IsSetNextScene(void)
 {
 	if (SCENE_NULL == s_nextScene)
@@ -346,12 +345,6 @@ void Scene_Change(void)
 		g_Scene.Update = update_main;
 		g_Scene.Render = render_main;
 		g_Scene.Release = release_main;
-		break;
-	case SCENE_SCENE2:
-		g_Scene.Init = init_scene2;
-		g_Scene.Update = update_scene2;
-		g_Scene.Render = render_scene2;
-		g_Scene.Release = release_scene2;
 		break;
 	}
 
