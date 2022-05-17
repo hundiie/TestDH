@@ -14,22 +14,19 @@ static ESceneType s_nextScene = SCENE_NULL;
 #define BLENDED 2
 
 const wchar_t* str[] = {
-	L"여기는 타이틀씬입니다. 텍스트와 관련된 여러가지를 테스트해봅시다.",
-	L"B키를 누르면 폰트가 굵게 변합니다.",
-	L"I키를 누르면 폰트가 이탤릭체로 변합니다.",
-	L"U키를 누르면 텍스트에 밑줄이 생깁니다.",
-	L"S키를 누르면 텍스트에 취소선이 생깁니다.",
-	L"N키를 누르면 다시 원래대로 돌아옵니다.",
-	L"C키를 누르면 렌더 모드가 바뀝니다. (Solid -> Shaded -> Blended)",
-	L"1키를 누르면 텍스트가 작아집니다.",
-	L"2키를 누르면 텍스트가 커집니다.",
-	L"스페이스 키를 누르면 다음 씬으로 넘어갑니다."
+	L"TEST"
+};
+
+const wchar_t* title_str[] = {
+	L"GAME START",
+	L"GAME EXIT"
 };
 
 typedef struct TitleSceneData
 {
 	Text	GuideLine[10];
 	Text	TestText;
+	Text	TestText2;
 	int32	FontSize;
 	int32	RenderMode;
 	Image	TestImage;
@@ -41,15 +38,15 @@ void init_title(void)
 	memset(g_Scene.Data, 0, sizeof(TitleSceneData));
 
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
-	for (int32 i = 0; i < 10; ++i)
-	{
-		Text_CreateText(&data->GuideLine[i], "d2coding.ttf", 16, str[i], wcslen(str[i]));
-	}
+	
+		Text_CreateText(&data->GuideLine[0], "d2coding.ttf", 16, str[0], wcslen(str[0]));
+	
 
-	data->FontSize = 24;
-	Text_CreateText(&data->TestText, "d2coding.ttf", data->FontSize, L"이 텍스트가 변합니다.", 13);
-
+	data->FontSize = 50;
+	Text_CreateText(&data->TestText, "d2coding.ttf", data->FontSize, title_str[0], 10, 10);
 	data->RenderMode = SOLID;
+	Text_CreateText(&data->TestText2, "d2coding.ttf", data->FontSize, title_str[1], 10, 10);
+
 
 	Image_LoadImage(&data->TestImage, "Background.jfif");
 }
@@ -58,9 +55,18 @@ void update_title(void)
 {
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
 
-	if (Input_GetKeyDown('B'))
+	
+	if (Input_GetKeyDown(VK_LEFT))
 	{
 		Text_SetFontStyle(&data->TestText, FS_BOLD);
+		Text_SetFontStyle(&data->TestText2, FS_NORMAL);
+		
+	}
+	
+	if (Input_GetKeyDown(VK_RIGHT))
+	{
+		Text_SetFontStyle(&data->TestText2, FS_BOLD);
+		Text_SetFontStyle(&data->TestText, FS_NORMAL);
 	}
 
 	if (Input_GetKeyDown('I'))
@@ -96,7 +102,9 @@ void update_title(void)
 
 	if (Input_GetKey('2'))
 	{
+		
 		++data->FontSize;
+		
 		Text_SetFont(&data->TestText, "d2coding.ttf", data->FontSize);
 	}
 
@@ -120,7 +128,8 @@ void render_title(void)
 	case SOLID:
 	{
 		SDL_Color color = { .a = 255 };
-		Renderer_DrawTextSolid(&data->TestText, 400, 400, color);
+		Renderer_DrawTextSolid(&data->TestText, 200, 500, color);
+		Renderer_DrawTextSolid(&data->TestText2, 600, 500, color);
 	}
 	break;
 	case SHADED:
@@ -128,6 +137,7 @@ void render_title(void)
 		SDL_Color bg = { .a = 255 };
 		SDL_Color fg = { .r = 255, .g = 255, .a = 255 };
 		Renderer_DrawTextShaded(&data->TestText, 400, 400, fg, bg);
+		Renderer_DrawTextShaded(&data->TestText2, 800, 400, fg, bg);
 	}
 	break;
 	case BLENDED:
@@ -135,6 +145,8 @@ void render_title(void)
 		Renderer_DrawImage(&data->TestImage, 400, 400);
 		SDL_Color color = { .r = 255, .g = 255, .b = 255, .a = 255 };
 		Renderer_DrawTextBlended(&data->TestText, 400, 400, color);
+		Renderer_DrawTextBlended(&data->TestText2, 400, 400, color);
+
 	}
 	break;
 	}
