@@ -10,7 +10,7 @@ int CSV()
 {
     FILE* p_file;
 
-    if (0 == fopen_s(&p_file, "asdver.1.csv", "rt"))//파일 이름 넣기
+    if (0 == fopen_s(&p_file, "TEST.1.csv", "rt"))//파일 이름 넣기
     {
 
         //맨 처음 줄 넘기기
@@ -77,9 +77,9 @@ int CSV()
                 else if (count2 == 16) {
                     strcpy(p1.sceneData[count].CHOICE_SOUND_3, ptr);
                 }
-
+            
                 count2++;
-                ptr = strtok(NULL, ",");      // 다음 문자열을 잘라서 포인터를 반환
+                ptr = strtok(NULL, ","); // 다음 문자열을 잘라서 포인터를 반환
             }
             count++;
             memset(one_line_string, 0, sizeof(one_line_string));
@@ -88,21 +88,21 @@ int CSV()
 
     fclose(p_file);
 
-    printf("%d\n", p1.sceneData[0].SENCE_NUMBER);
-    printf("%s\n", p1.sceneData[0].IMG_NAME);
-    printf("%s\n", p1.sceneData[0].SOUND_NAME);
-    printf("%s\n", p1.sceneData[0].EFT_NAME);
-    printf("%d\n", p1.sceneData[0].EFT_STARTDEL);
-    printf("%f\n", p1.sceneData[0].EFT_TIME);
-    printf("%d\n", p1.sceneData[0].EFT_LOOP);
-    printf("%s\n", p1.sceneData[0].SENCE_STORY);
-    printf("%s\n", p1.sceneData[0].CHOICE_STORY_1);
-    printf("%d\n", p1.sceneData[0].CHOICE_MOVE_1);
-    printf("%s\n", p1.sceneData[0].CHOICE_SOUND_1);
-    printf("%s\n", p1.sceneData[0].CHOICE_STORY_2);
-    printf("%d\n", p1.sceneData[0].CHOICE_MOVE_2);
-    printf("%s\n", p1.sceneData[0].CHOICE_SOUND_2);
-    printf("%s\n", p1.sceneData[0].CHOICE_STORY_3);
-    printf("%d\n", p1.sceneData[0].CHOICE_MOVE_3);
-    printf("%s\n", p1.sceneData[0].CHOICE_SOUND_3);
+    printf("%d\n", p1.sceneData[1].SENCE_NUMBER);
+    printf("%s\n", p1.sceneData[1].IMG_NAME);
+    printf("%s\n", p1.sceneData[1].SOUND_NAME);
+    printf("%s\n", p1.sceneData[1].EFT_NAME);
+    printf("%d\n", p1.sceneData[1].EFT_STARTDEL);
+    printf("%f\n", p1.sceneData[1].EFT_TIME);
+    printf("%d\n", p1.sceneData[1].EFT_LOOP);
+    printf("%s\n", p1.sceneData[1].SENCE_STORY);
+    printf("%s\n", p1.sceneData[1].CHOICE_STORY_1);
+    printf("%d\n", p1.sceneData[1].CHOICE_MOVE_1);
+    printf("%s\n", p1.sceneData[1].CHOICE_SOUND_1);
+    printf("%s\n", p1.sceneData[1].CHOICE_STORY_2);
+    printf("%d\n", p1.sceneData[1].CHOICE_MOVE_2);
+    printf("%s\n", p1.sceneData[1].CHOICE_SOUND_2);
+    printf("%s\n", p1.sceneData[1].CHOICE_STORY_3);
+    printf("%d\n", p1.sceneData[1].CHOICE_MOVE_3);
+    printf("%s\n", p1.sceneData[1].CHOICE_SOUND_3);
 }
