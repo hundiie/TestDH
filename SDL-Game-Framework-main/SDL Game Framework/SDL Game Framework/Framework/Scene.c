@@ -15,20 +15,14 @@ static ESceneType s_nextScene = SCENE_NULL;
 #define BLENDED 2
 
 const wchar_t* str[] = {
-	L"게임 시작",
-	L"게임 종료",
-
-	/*L"B키를 누르면 폰트가 굵게 변합니다.",
-	L"I키를 누르면 폰트가 이탤릭체로 변합니다.",
-	L"U키를 누르면 텍스트에 밑줄이 생깁니다.",
-	L"S키를 누르면 텍스트에 취소선이 생깁니다.",
-	L"N키를 누르면 다시 원래대로 돌아옵니다.",
-	L"C키를 누르면 렌더 모드가 바뀝니다. (Solid -> Shaded -> Blended)",
-	L"1키를 누르면 텍스트가 작아집니다.",
-	L"2키를 누르면 텍스트가 커집니다.",
-	L"스페이스 키를 누르면 다음 씬으로 넘어갑니다."*/
+	L"TEST"
 };
 #define TEXT_NUM1 2
+
+const wchar_t* title_str[] = {
+	L"GAME START",
+	L"GAME EXIT"
+};
 
 typedef struct TitleSceneData
 {
@@ -54,9 +48,10 @@ void init_title(void)
 	}
 	data->coord.X = 10;
 	data->coord.Y = 10;
-	data->RenderMode = SOLID;
+
 	int32		X=10;
 	int32		Y=10;
+	data->RenderMode = SOLID;
 	Image_LoadImage(&data->TestImage, "Background.jfif");
 	CSV;
 }
@@ -65,14 +60,14 @@ int count = 0;
 void update_title(void)
 {
 	
-	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
-	
 	if (count > 0)
-	{
+
 		if (Input_GetKeyDown(VK_UP))
 		{
 			count--;
 		}
+	{
+		Text_SetFontStyle(&data->TestText, FS_UNDERLINE);
 	}
 	if (count < TEXT_NUM1 - 1)
 	{
@@ -81,7 +76,7 @@ void update_title(void)
 			count++;
 		}
 	}
-	if (Input_GetKeyDown('R'))
+	if (Input_GetKeyDown(VK_SPACE))
 	{
 		Scene_SetNextScene(SCENE_MAIN);
 	}
@@ -98,10 +93,10 @@ void render_title(void)
 	
 	Renderer_DrawImage(&data->TestImage, data->X, data->Y);
 	
-	for (int32 i = 0; i < TEXT_NUM1; ++i)
-	{
 		Renderer_DrawTextSolid(&data->GuideLine[i], 500, 500 + i* data->FontSize, color);
 		Renderer_DrawTextSolid(&data->GuideLine[count], 500, 500 + count* data->FontSize, choice_color);
+	}
+	break;
 	}
 }
 
@@ -307,60 +302,6 @@ void release_main(void)
 
 	SafeFree(g_Scene.Data);
 }
-#pragma endregion
-
-#pragma region scene2
-
-#define TEXT_NUM2 2
-const wchar_t* str2[] = {
-	L"게임 시작",
-	L"게임 종료",
-};
-typedef struct scene2SceneData
-{
-	Text	GuideLine[TEXT_NUM2];
-	COORD	coord;
-	int32	FontSize;
-	int32	RenderMode;
-	Image	TestImage;
-}  scene2sceneData;
-
-void init_scene2 (void)
-{
-	//g_Scene.Data = malloc(sizeof(scene2sceneData));
-	//memset(g_Scene.Data, 0, sizeof(scene2sceneData));
-
-	//scene2sceneData* data = (scene2sceneData*)g_Scene.Data;
-	//for (int32 i = 0; i < TEXT_NUM2; ++i)
-	//{
-	//	Text_CreateText(&data->GuideLine[i], "d2coding.ttf", 20, str2[i], wcslen(str2[i]));
-	//}
-	//data->coord.X = 10;
-	//data->coord.Y = 10;
-	//data->RenderMode = SOLID;
-
-	//Image_LoadImage(&data->TestImage, "Background.jfif");
-}
-void update_scene2 (void)
-{
-	//scene2sceneData* data = (scene2sceneData*)g_Scene.Data;
-
-}
-void render_scene2 (void)
-{
-	//scene2sceneData* data = (scene2sceneData*)g_Scene.Data;
-
-}
-void release_scene2(void)
-{
-	//scene2sceneData* data = (scene2sceneData*)g_Scene.Data;
-
-	//for (int32 i = 0; i < TEXT_NUM2; ++i)
-	//{
-	//	Text_FreeText(&data->GuideLine[i]);
-	//}
-
-	//SafeFree(g_Scene.Data);
 }
 #pragma endregion
 bool Scene_IsSetNextScene(void)
