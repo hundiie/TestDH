@@ -212,9 +212,11 @@ void update_scene1(void)
 		{
 			switch (count1_2)
 			{
-			case 0:Scene_SetNextScene(SCENE_SCENE5);
+			case 0:Scene_SetNextScene(SCENE_SCENE2);
+				count1_2 = 3;
 				break;
-			case 1:Scene_SetNextScene(SCENE_SCENE4);
+			case 1:Scene_SetNextScene(SCENE_SCENE2);
+				count1_2 = 0;
 				break;
 			}
 		}
@@ -264,23 +266,6 @@ void render_scene1(void)
 		}
 	}
 }
-	//}
-	//if(count1 + 1 > STORY_TEXT_NUM_1)
-	//{
-	//	Renderer_DrawImage(&data->TestImage[2], 0, 0);
-
-	//	for (int i = 0; i < CHOICE_TEXT_NUM_1; i++)
-	//	{
-	//		if (i != count1_2)//선택 한 것 이외의 선택지 출력
-	//		{
-	//			Renderer_DrawTextSolid(&data->ChoiceText[i], data->X + i * teem, data->Y, color);
-	//		}
-	//		if (i == count1_2)
-	//		{
-	//			Renderer_DrawTextSolid(&data->ChoiceText[count1_2], data->X + count1_2 * teem + count1_2, data->Y + count1_2, choice_color);//선택한 선택지 출력
-	//		}
-	//	}
-	
 
 void release_scene1(void)
 {
@@ -299,22 +284,304 @@ void release_scene1(void)
 #pragma endregion
 
 #pragma region Scene2
+
+#define CHOICE_TEXT_NUM_2 6//선택지 수
+#define STORY_TEXT_NUM_2 10//스토리 문자열 수
+#define IMG_NUM_2 5//이미지 수
+#define FONT_SIZE_2 2//폰트 사이즈 수
+
+const wchar_t* Scene2_story[] = {
+	L"오늘 아빠가 데리고 놀러가준다고 약속해서 왔잖아!",//아이선택
+	L"이 곳은 남산타워 전망대 입니다.",
+	L"남산타워는 총 7층으로 구성되어있습니다.",
+	L"1층에는 각종 기프트샾, 2층에는 테라스, 3층에는…",//직원 선택
+	L"나는 31사단 특수부대 김지훈이라는 사실과 작전수행중이라는",
+	L"사실만 머리속에 맴돌뿐 이 상황이 이해되지 않는다.",
+	L"내 앞에 있는 아이는 누구인지 모든것들이 알 수 없는 의문 투성이다.",
+	L"직원의 설명은 크게 도움이 되지않았다.",//다음
+	L"직원에게 설명들은것만으로는 정보가 부족하다.",
+	L"주변을 조사하여 좀 더 정보를 수집해야 할 필요가 있을거 같다."
+};
+const wchar_t* Scene2_choice[] = {
+	L"아이에게 물어본게 실수인거같다.",
+	L"직원에게 물어보자",
+	L"(자신의 머리를 부여잡으며)",
+	L"설명은 됬습니다.",
+	L"정신부터 차리도록하자, 화장실에 가서 세수를 하자",
+	L"의자에 놓여져 있는 신문을 확인한다."
+};
+
+typedef struct Senen2SceneData
+{
+	Text	ChoiceText[CHOICE_TEXT_NUM_2];
+	Text	StoryText[STORY_TEXT_NUM_2];
+	COORD	coord;
+	int32	FontSize[FONT_SIZE_2];
+	int32	RenderMode;
+	Image	TestImage[IMG_NUM_2];
+	int32	X;
+	int32	Y;
+	int32	Count;
+} Senen2SceneData;
+
 void init_scene2(void)
 {
+	
+	g_Scene.Data = malloc(sizeof(Senen2SceneData));
+	memset(g_Scene.Data, 0, sizeof(Senen2SceneData));
+
+	Senen2SceneData* data = (Senen2SceneData*)g_Scene.Data;
+	
+	data->Count = count1_2;
+	data->FontSize[0] = 40;
+	data->FontSize[1] = 30;
+
+	for (int32 i = 0; i < STORY_TEXT_NUM_2; ++i)
+	{
+		Text_CreateText(&data->StoryText[i], "Chun_Bold.ttf", data->FontSize[0], Scene2_story[i], wcslen(Scene2_story[i]));
+	}
+	for (int32 i = 0; i < CHOICE_TEXT_NUM_2; ++i)
+	{
+		Text_CreateText(&data->ChoiceText[i], "Chun_Bold.ttf", data->FontSize[1], Scene2_choice[i], wcslen(Scene2_choice[i]));
+	}
+	for (int32 i = 4; i < CHOICE_TEXT_NUM_2; ++i)
+	{
+		Text_CreateText(&data->ChoiceText[i], "Chun_Bold.ttf", 20, Scene2_choice[i], wcslen(Scene2_choice[i]));
+	}
+	Image_LoadImage(&data->TestImage[0], "4.png");
+	Image_LoadImage(&data->TestImage[1], "No_Script.png");
+	Image_LoadImage(&data->TestImage[2], "Choice_1_Script.png");
+	Image_LoadImage(&data->TestImage[3], "5.png");
+	Image_LoadImage(&data->TestImage[4], "Choice_2_Script.png");
 }
+int count2=0;
 void update_scene2(void)
 {
+	Senen2SceneData* data = (Senen2SceneData*)g_Scene.Data;
+
+	if (Input_GetKeyDown(VK_SPACE)&& (data->Count < 14))
+	{
+		data->Count++;
+		//Scene_SetNextScene(SCENE_SCENE3);
+	}
+	else
+	{
+		if (count2 > 0)
+		{
+			if (Input_GetKeyDown(VK_LEFT))
+			{
+				count2--;
+			}
+		}
+		if (count2 < 2)
+		{
+			if (Input_GetKeyDown(VK_RIGHT))
+			{
+				count2++;
+			}
+		}
+		if (Input_GetKeyDown(VK_SPACE))
+		{
+			switch (count2)
+			{
+			case 0:Scene_SetNextScene(SCENE_SCENE3);
+				count2 = 0;
+				break;
+			case 1:Scene_SetNextScene(SCENE_SCENE3);
+				count2 = 1;
+				break;
+			}
+		}
+	}
 }
 void render_scene2(void)
 {
+	Senen2SceneData* data = (Senen2SceneData*)g_Scene.Data;
+	
+	data->X = 130;//선택지 시작 X좌표
+	data->Y = 600;//선택지 시작 Y좌표
+	int teem = 610;//석택지 사이의 거리
+
+	SDL_Color color = { .r = 255, .g = 255, .b = 255 };//비 선택 색깔
+	SDL_Color choice_color = { .g = 255 };//선택 색깔
+	SDL_Color Stroy_color = { .r = 255, .g = 0, .b = 0 };//제목 색깔
+#pragma region Hard_coding
+	if (data->Count < 3)
+	{
+		Renderer_DrawImage(&data->TestImage[0], 0, 0);   //짜증나서 하드코딩함
+		if (data->Count == 0)
+		{
+			Renderer_DrawImage(&data->TestImage[1], 0, 0);
+			Renderer_DrawTextSolid(&data->StoryText[0], 90, 500, Stroy_color);
+		}
+		else		{
+			Renderer_DrawImage(&data->TestImage[2], 0, 0);
+			Renderer_DrawTextSolid(&data->StoryText[0], 90, 450, Stroy_color);
+			Renderer_DrawTextSolid(&data->ChoiceText[data->Count - 1], data->X, data->Y, choice_color);
+		}
+	}
+	else  if (data->Count < 8)
+	{
+		Renderer_DrawImage(&data->TestImage[3], 0, 0);
+		if (data->Count < 6)
+		{
+			Renderer_DrawImage(&data->TestImage[1], 0, 0);
+			if (data->Count ==3)
+			{
+				Renderer_DrawTextSolid(&data->StoryText[1], 90, 400, Stroy_color);
+			}
+			if (data->Count == 4)
+			{
+				Renderer_DrawTextSolid(&data->StoryText[1], 90, 400, Stroy_color);
+				Renderer_DrawTextSolid(&data->StoryText[2], 90, 450, Stroy_color);
+			}
+			if (data->Count == 5)
+			{
+				Renderer_DrawTextSolid(&data->StoryText[1], 90, 400, Stroy_color);
+				Renderer_DrawTextSolid(&data->StoryText[2], 90, 450, Stroy_color);
+				Renderer_DrawTextSolid(&data->StoryText[3], 90, 500, Stroy_color);
+			}
+		}
+		if (data->Count == 6)
+		{
+			Renderer_DrawImage(&data->TestImage[2], 0, 0);
+			Renderer_DrawTextSolid(&data->StoryText[1], 90, 400, Stroy_color);
+			Renderer_DrawTextSolid(&data->StoryText[2], 90, 450, Stroy_color);
+			Renderer_DrawTextSolid(&data->StoryText[3], 90, 500, Stroy_color);
+			Renderer_DrawTextSolid(&data->ChoiceText[2], data->X, data->Y, choice_color);
+		}
+		if (data->Count == 7)
+		{
+			Renderer_DrawImage(&data->TestImage[2], 0, 0);
+			Renderer_DrawTextSolid(&data->StoryText[1], 90, 400, Stroy_color);
+			Renderer_DrawTextSolid(&data->StoryText[2], 90, 450, Stroy_color);
+			Renderer_DrawTextSolid(&data->StoryText[3], 90, 500, Stroy_color);
+			Renderer_DrawTextSolid(&data->ChoiceText[3], data->X, data->Y, choice_color);
+		}
+	}
+	else if(data->Count <10)
+	{
+		Renderer_DrawImage(&data->TestImage[3], 0, 0);
+		if (data->Count == 8)
+		{
+			Renderer_DrawImage(&data->TestImage[1], 0, 0);
+			Renderer_DrawTextSolid(&data->StoryText[4], 90, 450, Stroy_color);
+		}
+		if (data->Count == 9)
+		{
+			Renderer_DrawImage(&data->TestImage[1], 0, 0);
+			Renderer_DrawTextSolid(&data->StoryText[4], 90, 450, Stroy_color);
+			Renderer_DrawTextSolid(&data->StoryText[5], 90, 500, Stroy_color);
+		}
+	}
+	else if (data->Count < 12)
+	{
+		Renderer_DrawImage(&data->TestImage[3], 0, 0);
+		if (data->Count == 10)
+		{
+			Renderer_DrawImage(&data->TestImage[1], 0, 0);
+			Renderer_DrawTextSolid(&data->StoryText[6], 90, 450, Stroy_color);
+		}
+		if (data->Count == 11)
+		{
+			Renderer_DrawImage(&data->TestImage[1], 0, 0);
+			Renderer_DrawTextSolid(&data->StoryText[6], 90, 450, Stroy_color);
+			Renderer_DrawTextSolid(&data->StoryText[7], 90, 500, Stroy_color);
+		}
+
+	}
+	else if (data->Count < 15)
+	{
+		Renderer_DrawImage(&data->TestImage[3], 0, 0);
+		if (data->Count == 12)
+		{
+			Renderer_DrawImage(&data->TestImage[1], 0, 0);
+			Renderer_DrawTextSolid(&data->StoryText[8], 90, 450, Stroy_color);
+		}
+		if (data->Count == 13)
+		{
+			Renderer_DrawImage(&data->TestImage[1], 0, 0);
+			Renderer_DrawTextSolid(&data->StoryText[8], 90, 450, Stroy_color);
+			Renderer_DrawTextSolid(&data->StoryText[9], 90, 500, Stroy_color);
+		}
+		if (data->Count == 14)
+		{
+			Renderer_DrawImage(&data->TestImage[4], 0, 0);
+			Renderer_DrawTextSolid(&data->StoryText[8], 90, 400, Stroy_color);
+			Renderer_DrawTextSolid(&data->StoryText[9], 90, 450, Stroy_color);
+
+			for (int i = 0; i < 2; i++)
+			{
+				if (i != count2)//선택 한 것 이외의 선택지 출력
+				{
+					Renderer_DrawTextSolid(&data->ChoiceText[i + 4], data->X + i * teem, data->Y, color);
+				}
+				if (i == count2)
+				{
+					Renderer_DrawTextSolid(&data->ChoiceText[count2+4], data->X + count2 * teem, data->Y, choice_color);//선택한 선택지 출력
+				}
+			}
+		}
+	}
+#pragma endregion
 }
 void release_scene2(void)
 {
+	Senen2SceneData* data = (Senen2SceneData*)g_Scene.Data;
+
+	for (int32 i = 0; i < STORY_TEXT_NUM_2; ++i)
+	{
+		Text_FreeText(&data->StoryText[i]);
+	}
+	for (int32 i = 0; i < CHOICE_TEXT_NUM_2; ++i)
+	{
+		Text_FreeText(&data->ChoiceText[i]);
+	}
+	SafeFree(g_Scene.Data);
 }
 
 #pragma endregion
 
 #pragma region Scene3
+#define CHOICE_TEXT_NUM_3 6//선택지 수
+#define STORY_TEXT_NUM_3 10//스토리 문자열 수
+#define IMG_NUM_3 5//이미지 수
+#define FONT_SIZE_3 2//폰트 사이즈 수
+
+const wchar_t* Scene3_story[] = {
+	L"오늘 아빠가 데리고 놀러가준다고 약속해서 왔잖아!",//아이선택
+	L"이 곳은 남산타워 전망대 입니다.",
+	L"남산타워는 총 7층으로 구성되어있습니다.",
+	L"1층에는 각종 기프트샾, 2층에는 테라스, 3층에는…",//직원 선택
+	L"나는 31사단 특수부대 김지훈이라는 사실과 작전수행중이라는",
+	L"사실만 머리속에 맴돌뿐 이 상황이 이해되지 않는다.",
+	L"내 앞에 있는 아이는 누구인지 모든것들이 알 수 없는 의문 투성이다.",
+	L"직원의 설명은 크게 도움이 되지않았다.",//다음
+	L"직원에게 설명들은것만으로는 정보가 부족하다.",
+	L"주변을 조사하여 좀 더 정보를 수집해야 할 필요가 있을거 같다."
+};
+const wchar_t* Scene3_choice[] = {
+	L"아이에게 물어본게 실수인거같다.",
+	L"직원에게 물어보자",
+	L"(자신의 머리를 부여잡으며)",
+	L"설명은 됬습니다.",
+	L"정신부터 차리도록하자, 화장실에 가서 세수를 하자",
+	L"의자에 놓여져 있는 신문을 확인한다."
+};
+
+typedef struct Senen3SceneData
+{
+	Text	ChoiceText[CHOICE_TEXT_NUM_3];
+	Text	StoryText[STORY_TEXT_NUM_3];
+	COORD	coord;
+	int32	FontSize[FONT_SIZE_3];
+	int32	RenderMode;
+	Image	TestImage[IMG_NUM_3];
+	int32	X;
+	int32	Y;
+	int32	Count;
+} Senen3SceneData;
+
 void init_scene3(void)
 {
 }
