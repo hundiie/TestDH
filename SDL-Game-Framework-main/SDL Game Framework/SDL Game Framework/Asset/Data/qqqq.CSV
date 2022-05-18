@@ -1,0 +1,7 @@
+씬넘버,대사,선택지1,선택지 1 이동,선택지 1 사운드,선택지 2,선택지 2 이동,선택지 2 사운드,선택지 3,선택지 3이동,선택지 3사운드,사운드,이미지
+1,집 갈까?,엉,2,effect2.wav,"아니
+안갈래",3,effect2.wav,,,,powerful.mp3,Background.jfjf
+2,집왔는데 잘까?,엉,4,,아니,4,,,,,,Background.jfjf
+3,걍 집갈까?,"엉
+갈래",1,,,,,,,,powerful.mp3,Background.jfjf
+4,안자고 다시 학원갈까?,엉,1,effect2.wav,,,,,,,,Background.jfjf
