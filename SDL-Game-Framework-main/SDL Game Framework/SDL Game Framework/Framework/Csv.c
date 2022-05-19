@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "csv.h"
-#include <clocale>
 
 static byte* s_Buffer;
 static byte* s_BufferPointer;
@@ -155,15 +154,15 @@ wchar_t* ParseToUnicode(const CsvItem item)
 	return result;
 }
 
-char* csvFile = "qqqq.csv";
-void csv_Init(void)
-{
-	memset(&csvFile, 0, sizeof(CsvFile));
-	CreateCsvFile(&csvFile, "Data.csv");
-	// CSV 파일 파싱한 후 텍스트 그려본 다음 제대로 출력 안되면
-	// App_Init()에 아래 구문 추가
-	setlocale(LC_ALL, "kr_KR.utf8");
-}
+//char* csvFile = "qqqq.csv";
+//void csv_Init(void)
+//{
+//	memset(&csvFile, 0, sizeof(CsvFile));
+//	CreateCsvFile(&csvFile, "Data.csv");
+//	// CSV 파일 파싱한 후 텍스트 그려본 다음 제대로 출력 안되면
+//	// App_Init()에 아래 구문 추가
+//	setlocale(LC_ALL, "kr_KR.utf8");
+//}
 
 bool isString = false;
 
@@ -174,10 +173,16 @@ wchar_t* StringLine(wchar_t* string, wchar_t* stringl)
 		if (*string == L'"') isString = !isString;
 		if (isString && *string == L'"') string++; // 문자열 표시 넘어감
 
-		if (*string == L'\\n')
+		if (*string == L'\n')
 		{
 			*stringl = NULL;
 			string++;
+			if (string + 1 !=NULL)
+			{
+				StringLine(string + 1, stringl);
+				return stringl;
+			}
+			
 			break;
 		}
 		else if (*string == NULL)
@@ -188,5 +193,4 @@ wchar_t* StringLine(wchar_t* string, wchar_t* stringl)
 		*stringl = *string;
 		stringl++;  string++;
 	}
-	return string;
 }

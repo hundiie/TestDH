@@ -2,6 +2,10 @@
 #include "Framework/Csv.h"
 #include "CSV_farser.h"
 #include "Framework/Csv.h"
+#include "Framework/Scene.h"
+#include "Framework/Image.h"
+#include "Framework/Audio.h"
+
 
 /// <summary>
 /// 
@@ -11,7 +15,7 @@
 /// <param name="c">Y°ª</param>
 /// <returns></returns>
 /// 
-char* csvfile = "qqqq.CSV";
+char* csvfile = "GGAM.CSV";
 
 void* csv_t(char* fileName, int x, int y)
 {
@@ -22,3 +26,5 @@ void* csv_t(char* fileName, int x, int y)
 	char* str = ParseToUnicode(csvFile.Items[x][y]);
 	return str;
 }
+
+//char* csv_s(MainSceneData )

@@ -16,22 +16,6 @@ typedef struct CsvFile
 	CsvItem*	Items[MAXIMUM_ROW];
 } CsvFile;
 
-typedef enum mainGame
-{
-	SCENE_NUMBER,
-	STORY,
-	CHOICE1,
-	CHOICE1_MOVE,
-	CHOICE1_SOUND,
-	CHOICE2,
-	CHOICE2_MOVE,
-	CHOICE2_SOUND,
-	CHOICE3,
-	CHOICE3_MOVE,
-	CHOICE3_SOUND,
-	SOUND,
-	IMAGE
-}MAINGAME;
 
 
 
@@ -69,6 +53,5 @@ char*		ParseToAscii(const CsvItem item);
 /// <returns></returns>
 wchar_t*	ParseToUnicode(const CsvItem item);
 
-void csv_Init(void);
 
 wchar_t* StringLine(wchar_t* string, wchar_t* stringl);
