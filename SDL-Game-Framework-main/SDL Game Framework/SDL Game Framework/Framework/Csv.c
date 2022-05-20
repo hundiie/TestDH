@@ -147,11 +147,21 @@ char* ParseToAscii(const CsvItem item)
 
 wchar_t* ParseToUnicode(const CsvItem item)
 {
-	int size = MultiByteToWideChar(CP_ACP, NULL, item.RawData, -1, NULL, NULL);
-	wchar_t* result = (wchar_t*)malloc(sizeof(wchar_t) * (size + 1));
-	MultiByteToWideChar(CP_ACP, NULL, item.RawData, -1, result, size);
+   int32 size = strlen(item.RawData);
+   int32 wideLen = MultiByteToWideChar(CP_ACP, NULL, item.RawData, -1, NULL, 0);
+   wchar_t* result = (wchar_t*)malloc(sizeof(wchar_t) * wideLen);
+   memset(result, 0, sizeof(wchar_t) * wideLen);
 
-	return result;
+   if (item.RawData[0] == '"' && item.RawData[size - 1] == '"')
+   {
+      MultiByteToWideChar(CP_ACP, NULL, &item.RawData[1], -1, result, wideLen - 3);
+   }
+   else
+   {
+      MultiByteToWideChar(CP_ACP, NULL, item.RawData, -1, result, wideLen);
+   }
+   
+   return result;
 }
 
 //char* csvFile = "qqqq.csv";
@@ -177,12 +187,6 @@ wchar_t* StringLine(wchar_t* string, wchar_t* stringl)
 		{
 			*stringl = NULL;
 			string++;
-			if (string + 1 !=NULL)
-			{
-				StringLine(string + 1, stringl);
-				return stringl;
-			}
-			
 			break;
 		}
 		else if (*string == NULL)
@@ -193,4 +197,5 @@ wchar_t* StringLine(wchar_t* string, wchar_t* stringl)
 		*stringl = *string;
 		stringl++;  string++;
 	}
+	return string;
 }
