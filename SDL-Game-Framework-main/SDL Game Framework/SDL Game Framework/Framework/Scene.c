@@ -220,6 +220,7 @@ static int iscene = 1;
 char* wav[3];
 int wav_t = 0;
 int wav_s = 0;
+
 void init_main(void)
 {
 	g_Scene.Data = malloc(sizeof(MainSceneData));
@@ -251,7 +252,6 @@ void init_main(void)
 	default:
 		break;
 	}
-
 
 	for (int i = 0; i < 5; i++)//카운터 초기화
 	{
@@ -318,6 +318,12 @@ void update_main(void)
 		Scene_SetNextScene(SCENE_TITLE);
 		iscene = 1;
 	}
+
+	if (iscene == 118)//118번씬 엔딩으로 이동
+	{
+		Scene_SetNextScene(SCENE_END);
+		iscene = 1;
+	}
 	MainSceneData* data = (MainSceneData*)g_Scene.Data;
 	
 	data->TIMER += Timer_GetDeltaTime();//시간초 받기
@@ -350,7 +356,8 @@ void update_main(void)
 	}
 	if (wav_t != 0)
 	{
-		Audio_StopSoundEffect();
+		//Audio_StopSoundEffect();//소리 출력
+		
 		switch (wav_t)
 		{
 		case 1:Audio_PlaySoundEffect(&data->CHOICE_SOUND[0], 1);
@@ -362,7 +369,6 @@ void update_main(void)
 		case 3:Audio_PlaySoundEffect(&data->CHOICE_SOUND[2], 1);
 			wav_t = 0;
 			break;
-
 		default:
 			break;
 		}
