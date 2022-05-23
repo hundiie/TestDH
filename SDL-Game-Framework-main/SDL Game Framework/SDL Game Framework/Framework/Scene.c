@@ -235,11 +235,12 @@ void init_main(void)
 	char* fname = "GGAM.csv";//CSV파일 이름
 	CreateCsvFile(&csvFile, fname);
 	
-	data->SCENE_NUMBER = ParseToInt(csvFile.Items[iscene][1]);//씬 넘버 저장
-	data->MOTION =  ParseToInt(csvFile.Items[data->SCENE_NUMBER][14]);//효과 넘버 저장
+	int32 scene_number = ParseToInt(csvFile.Items[iscene][1]);//씬 넘버 저장
+	int16 motion = ParseToInt(csvFile.Items[data->SCENE_NUMBER][14]);//효과 넘버 저장
+	data->SCENE_NUMBER = scene_number;
+	data->MOTION = motion;
 	data->STORY_NUMBER = ParseToInt(csvFile.Items[data->SCENE_NUMBER][15]);//대사 수 저장
 	data->CHOICE_NUMBER = ParseToInt(csvFile.Items[data->SCENE_NUMBER][16]);//선택지 수 저장
-	
 	data->FONT_SIZE = 30;// 폰트 사이즈 저장
 	data->TIMER = 0.0f;//타이머 초기화
 	data->VOLUME = 1.0f;//소리 크기 저장
@@ -257,15 +258,13 @@ void init_main(void)
 		break;
 	}
 	
-
-
 	for (int i = 0; i < 5; i++)//카운터 초기화
 	{
 		data->CHOICE_COUNT[i] = 0;
 	}
-
-	char* ttes2 = ParseToUnicode(csvFile.Items[data->SCENE_NUMBER][2]);// 스토리 저장
-	
+	char* ttes1 = ParseToUnicode(csvFile.Items[data->SCENE_NUMBER][2]);// 스토리 저장
+	char* ttes2 = ttes1;
+	SafeFree(ttes1);
 	for (int i = 0; i < data->STORY_NUMBER; i++)// 스토리 가공
 	{
 		wchar_t* str2[100] = { L"" };
@@ -308,16 +307,15 @@ void init_main(void)
 
 	char* imageFile = ParseToAscii(csvFile.Items[data->SCENE_NUMBER][13]);
 	Image_LoadImage(&data->IMAGE, imageFile);// 이미지 저장 
-	//imageFile = "7.png";
-	Image_LoadImage(&data->STORY_IMAGE, "7.png");// 창 화면 이미지 저장
+	char imageFile1[128] = "7.png";
+	Image_LoadImage(&data->STORY_IMAGE, imageFile1);// 창 화면 이미지 저장
 	//SafeFree(imageFile2);
 	if (data->MOTION == 1 || data->MOTION == 2)
 	{
-		//imageFile = "BLACK.png";
-		Image_LoadImage(&data->BLACK_IMAGE, "BLACK.png");// 검은 화면 이미지 저장
+		char imageFile2[128] = "BLACK.png";
+		Image_LoadImage(&data->BLACK_IMAGE, imageFile2);// 검은 화면 이미지 저장
 	}
 	SafeFree(imageFile);
-	
 	Audio_Play(&data->SOUND, 1);
 	FreeCsvFile(&csvFile);//파일 닫기
 }
@@ -525,7 +523,6 @@ void render_main(void)
 	{
 		Renderer_DrawImage(&data->BLACK_IMAGE, 0, 0);
 	}
-	
 }
 
 void release_main(void)
