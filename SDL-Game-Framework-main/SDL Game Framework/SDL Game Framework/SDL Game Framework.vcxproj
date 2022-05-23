@@ -127,7 +127,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)External\Lib\SDL2\*.dll"  "$(TargetDir)";</Command>
+      <Command>copy "$(SolutionDir)External\Lib\SDL2\*.dll"  "$(TargetDir)";
+xcopy "$(ProjectDir)Asset\*.*" "$(TargetDir)Asset\" /E /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,12 +148,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)External\Lib\SDL2\*.dll"  "$(TargetDir)";</Command>
+      <Command>copy "$(SolutionDir)External\Lib\SDL2\*.dll"  "$(TargetDir)";
+xcopy "$(ProjectDir)Asset\*.*" "$(TargetDir)Asset\" /E /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.c" />
+    <ClCompile Include="CSV_Farser.c" />
     <ClCompile Include="Framework\Audio.c" />
+    <ClCompile Include="Framework\Csv.c" />
     <ClCompile Include="Framework\Image.c" />
     <ClCompile Include="Framework\Input.c" />
     <ClCompile Include="Framework\Random.c" />
@@ -171,8 +175,10 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="CSV_farser.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="Framework\Audio.h" />
+    <ClInclude Include="Framework\Csv.h" />
     <ClInclude Include="Framework\Image.h" />
     <ClInclude Include="Framework\Input.h" />
     <ClInclude Include="Framework\Random.h" />

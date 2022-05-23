@@ -4,6 +4,7 @@
 #include "Framework.h"
 #include "Framework/Scene.h"
 #include "Framework/Window.h"
+#include "Framework/Csv.h"
 
 App g_App;
 
@@ -52,7 +53,6 @@ bool App_Init(void)
 
 		return false;
 	}
-
 	return true;
 }
 

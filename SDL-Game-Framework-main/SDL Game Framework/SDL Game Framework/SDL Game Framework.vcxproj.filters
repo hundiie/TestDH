@@ -37,10 +37,16 @@
     <ClCompile Include="Framework\Scene.c">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\Audio.c">
+    <ClCompile Include="Framework\Text.c">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\Text.c">
+    <ClCompile Include="Framework\Csv.c">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="CSV_Farser.c">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Audio.c">
       <Filter>Framework</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,6 +83,12 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Text.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Csv.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="CSV_farser.h">
       <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>
