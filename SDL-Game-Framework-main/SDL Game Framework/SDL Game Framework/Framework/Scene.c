@@ -49,7 +49,7 @@ void init_title(void)
 	}
 	Audio_LoadMusic(&data->BGM, "Jaesung.mp3");
 	Audio_PlayFadeIn(&data->BGM, INFINITY_LOOP, 3000);
-	Text_CreateText(&data->TitleText, "d2coding.ttf", 100, L"T I T L E", 9);
+	Text_CreateText(&data->TitleText, "d2coding.ttf", 100, L" ", 9);
 	Text_SetFontStyle(&data->TitleText, FS_BOLD);
 	//data->RenderMode = BLENDED;
 	Image_LoadImage(&data->TestImage[0], "NamSan.jpg");
@@ -69,7 +69,10 @@ int count = 0;
 void update_title(void)
 {
 	TitleSceneNewData* data = (TitleSceneNewData*)g_Scene.Data;
-
+	
+	Audio_StopSoundEffect();
+	Audio_Stop();
+	
 	if (count > 0)
 	{
 		if (Input_GetKeyDown(VK_UP))
@@ -217,6 +220,7 @@ void log2OnFinished(int32 channel)
 
 static int iscene = 1;
 
+SoundEffect	C_SOUND[3];
 char* wav[3];
 int wav_t = 0;
 int wav_s = 0;
@@ -232,7 +236,7 @@ void init_main(void)
 	CreateCsvFile(&csvFile, fname);
 	
 	data->SCENE_NUMBER = ParseToInt(csvFile.Items[iscene][1]);//씬 넘버 저장
-	data->MOTION = ParseToInt(csvFile.Items[data->SCENE_NUMBER][14]);//효과 넘버 저장
+	data->MOTION =  ParseToInt(csvFile.Items[data->SCENE_NUMBER][14]);//효과 넘버 저장
 	data->STORY_NUMBER = ParseToInt(csvFile.Items[data->SCENE_NUMBER][15]);//대사 수 저장
 	data->CHOICE_NUMBER = ParseToInt(csvFile.Items[data->SCENE_NUMBER][16]);//선택지 수 저장
 	
@@ -252,6 +256,8 @@ void init_main(void)
 	default:
 		break;
 	}
+	
+
 
 	for (int i = 0; i < 5; i++)//카운터 초기화
 	{
@@ -266,13 +272,15 @@ void init_main(void)
 		ttes2 = StringLine(ttes2, str2);
 		Text_CreateText(&data->STORY[i], "Chun_Bold.ttf", data->FONT_SIZE, str2, wcslen(str2));
 	}
-	if (iscene != 1)
+	
+	if (iscene != 0)
 	{
 		for (int i = 0; i < wav_s; i++)// 사운드 데이터에 추가
 		{
 			if (*wav[i] != '\0')
 			{
-				Audio_LoadSoundEffect(&data->CHOICE_SOUND[i], wav[i]);
+				//Audio_LoadSoundEffect(&data->CHOICE_SOUND[i], wav[i]);
+				Audio_LoadSoundEffect(&C_SOUND[i], wav[i]);
 			}
 		}
 	}
@@ -300,13 +308,16 @@ void init_main(void)
 
 	char* imageFile = ParseToAscii(csvFile.Items[data->SCENE_NUMBER][13]);
 	Image_LoadImage(&data->IMAGE, imageFile);// 이미지 저장 
+	//imageFile = "7.png";
 	Image_LoadImage(&data->STORY_IMAGE, "7.png");// 창 화면 이미지 저장
+	//SafeFree(imageFile2);
 	if (data->MOTION == 1 || data->MOTION == 2)
 	{
+		//imageFile = "BLACK.png";
 		Image_LoadImage(&data->BLACK_IMAGE, "BLACK.png");// 검은 화면 이미지 저장
 	}
-	
 	SafeFree(imageFile);
+	
 	Audio_Play(&data->SOUND, 1);
 	FreeCsvFile(&csvFile);//파일 닫기
 }
@@ -325,11 +336,13 @@ void update_main(void)
 		iscene = 1;
 	}
 	MainSceneData* data = (MainSceneData*)g_Scene.Data;
-	
+	if (iscene ==4)
+	{
+		Audio_StopSoundEffect();
+	}
 	data->TIMER += Timer_GetDeltaTime();//시간초 받기
 	data->EARTH += Timer_GetDeltaTime();//시간초 받기
 	data->NEXT += Timer_GetDeltaTime();//시간초 받기
-
 
 	if (data->MOTION > 0)
 	{
@@ -354,19 +367,24 @@ void update_main(void)
 			break;
 		}
 	}
-	if (wav_t != 0)
+	if (wav_t != 0)//소리 출력
 	{
-		//Audio_StopSoundEffect();//소리 출력
 		
+		if (iscene < 80)
+		{
+			Audio_StopSoundEffect();
+		}
+
 		switch (wav_t)
 		{
-		case 1:Audio_PlaySoundEffect(&data->CHOICE_SOUND[0], 1);
+		case 1:
+			Audio_PlaySoundEffect(&C_SOUND[0], 1);//선택지 1
 			wav_t = 0;
 			break;
-		case 2:Audio_PlaySoundEffect(&data->CHOICE_SOUND[1], 1);
+		case 2:Audio_PlaySoundEffect(&C_SOUND[1], 1);//선택지 2
 			wav_t = 0;
 			break;
-		case 3:Audio_PlaySoundEffect(&data->CHOICE_SOUND[2], 1);
+		case 3:Audio_PlaySoundEffect(&C_SOUND[2], 1);//선택지 3
 			wav_t = 0;
 			break;
 		default:
@@ -411,8 +429,8 @@ void update_main(void)
 			switch (data->CHOICE_COUNT[0])
 			{
 			case 0:iscene = data->CHOICE_MOVE[0];
-				wav_t = 1;
 				Audio_Stop();
+				wav_t = 1;
 				if (data->MOTION == 2)//암전 만들기
 				{
 					data->CHOICE_COUNT[3] = 1;
@@ -426,7 +444,6 @@ void update_main(void)
 			case 1:iscene = data->CHOICE_MOVE[1];
 				Audio_Stop();
 				wav_t = 2;
-
 				if (data->MOTION == 2)//암전 만들기
 				{
 					data->CHOICE_COUNT[3] = 1;
@@ -508,6 +525,7 @@ void render_main(void)
 	{
 		Renderer_DrawImage(&data->BLACK_IMAGE, 0, 0);
 	}
+	
 }
 
 void release_main(void)
@@ -639,7 +657,6 @@ void update_end(void)
 		data->Alpha2 = 255;
 	}
 
-
 	if (Input_GetKeyDown(VK_SPACE)) // 속도조절
 	{
 		data->Speed = 3;
@@ -649,7 +666,6 @@ void update_end(void)
 	{
 		data->Speed = 1;
 	}
-
 
 	if (Input_GetKeyUp(VK_ESCAPE))// 뒤로가기
 	{

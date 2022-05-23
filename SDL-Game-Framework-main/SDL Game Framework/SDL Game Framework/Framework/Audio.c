@@ -20,7 +20,7 @@ bool Audio_Init(void)
 		return false;
 	}
 
-	Audio_SetVolume(0.5f);
+	Audio_SetVolume(0.1f);
 
 	return true;
 }
@@ -34,7 +34,7 @@ void Audio_Cleanup(void)
 void Audio_SetVolume(float volume)
 {
 	s_MusicVolume = Clamp(0.0f, volume, 1.0f);
-	
+
 	int32 realVolume = 0 + s_MusicVolume * MIX_MAX_VOLUME;
 	Mix_VolumeMusic(realVolume);
 }
@@ -149,7 +149,7 @@ void Audio_SetEffectVolume(SoundEffect* soundEffect, float volume)
 	soundEffect->Volume = Clamp(0.0f, volume, 1.0f);
 
 	int32 realVolume = 0 + soundEffect->Volume * MIX_MAX_VOLUME;
-	Mix_VolumeChunk(soundEffect->Chunk, soundEffect->Volume);
+	Mix_VolumeChunk(soundEffect->Chunk, realVolume);
 }
 
 void Audio_PlaySoundEffect(const SoundEffect* soundEffect, int32 loops)

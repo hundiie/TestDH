@@ -37,9 +37,6 @@
     <ClCompile Include="Framework\Scene.c">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Framework\Audio.c">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\Text.c">
       <Filter>Framework</Filter>
     </ClCompile>
@@ -47,6 +44,9 @@
       <Filter>Framework</Filter>
     </ClCompile>
     <ClCompile Include="CSV_Farser.c">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Audio.c">
       <Filter>Framework</Filter>
     </ClCompile>
   </ItemGroup>
